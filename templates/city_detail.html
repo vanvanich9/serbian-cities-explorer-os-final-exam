@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ city.name }} - Serbian Cities Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            margin-bottom: 30px;
+            transition: background 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .city-header {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .city-title {
+            font-size: 3.5rem;
+            color: #333;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .city-subtitle {
+            font-size: 1.3rem;
+            color: #666;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .city-hero {
+            height: 300px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8rem;
+            color: white;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .city-hero img,
+        .city-hero svg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .city-hero .fallback {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8rem;
+            color: white;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+
+        .city-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            height: fit-content;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .info-value {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .city-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .city-title {
+                font-size: 2.5rem;
+            }
+            
+            .city-hero {
+                font-size: 5rem;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-button">← Back to Cities</a>
+
+        <div class="city-header">
+            <div class="city-hero">
+                {% if city.image %}
+                {% set jpg_path = 'images/' + city.image %}
+                {% set svg_path = 'images/' + city.image.replace('.jpg', '.svg') %}
+                <img src="{{ url_for('static', path=jpg_path) }}" 
+                     alt="{{ city.name }}" 
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <img src="{{ url_for('static', path=svg_path) }}" 
+                     alt="{{ city.name }}" 
+                     style="display: none;"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="fallback" style="display: none;">{{ city.name[0] }}</div>
+                {% else %}
+                <div class="fallback">{{ city.name[0] }}</div>
+                {% endif %}
+            </div>
+            <h1 class="city-title">{{ city.name }}</h1>
+            <p class="city-subtitle">{{ city.region }}</p>
+        </div>
+
+        <div class="city-content">
+            <div class="main-content">
+                <h2 class="section-title">About {{ city.name }}</h2>
+                <p class="description">{{ city.description }}</p>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">{{ "{:,}".format(city.population) }}</div>
+                        <div class="stat-label">Population</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">{{ city.area }} km²</div>
+                        <div class="stat-label">Area</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">{{ city.founded_year }}</div>
+                        <div class="stat-label">Founded</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <h3 class="section-title">City Information</h3>
+                
+                <div class="info-item">
+                    <div class="info-label">Region</div>
+                    <div class="info-value">{{ city.region }}</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">Founded</div>
+                    <div class="info-value">{{ city.founded_year }}</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">Population</div>
+                    <div class="info-value">{{ "{:,}".format(city.population) }} people</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">Area</div>
+                    <div class="info-value">{{ city.area }} square kilometers</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
